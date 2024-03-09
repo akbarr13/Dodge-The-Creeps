@@ -1,0 +1,67 @@
+[gd_scene load_steps=10 format=3 uid="uid://civ58c6r0wphx"]
+
+[ext_resource type="Script" path="res://game.gd" id="1_3yb7p"]
+[ext_resource type="PackedScene" uid="uid://c8pho08a7hdh1" path="res://player.tscn" id="1_astb0"]
+[ext_resource type="Script" path="res://Label.gd" id="3_ddp4h"]
+[ext_resource type="AudioStream" uid="uid://daq7ir2vxm5gx" path="res://art/House In a Forest Loop.ogg" id="4_mwnc6"]
+[ext_resource type="AudioStream" uid="uid://ch47p4eqfvhhb" path="res://art/tmp_7901-951678082.mp3" id="5_ntjv0"]
+[ext_resource type="Script" path="res://BackgroundMusic.gd" id="5_s48n0"]
+[ext_resource type="Script" path="res://DeathSound.gd" id="6_ixtwq"]
+
+[sub_resource type="Curve2D" id="Curve2D_kp6p4"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -1, 8, 0, 0, 0, 0, 1365, 5, 0, 0, 0, 0, 1368, 769, 0, 0, 0, 0, -1, 769, 0, 0, 0, 0, -4, 8)
+}
+point_count = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_q8pd1"]
+font_size = 60
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_3yb7p")
+
+[node name="Player" parent="." instance=ExtResource("1_astb0")]
+position = Vector2(321, 304)
+collision_mask = 3
+
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource("Curve2D_kp6p4")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+position = Vector2(-1, 8)
+rotation = -0.00219619
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = -1
+anchor_right = 0.5
+offset_left = 677.0
+offset_top = 20.0
+offset_right = 725.0
+offset_bottom = 79.0
+grow_horizontal = 2
+text = "00
+"
+label_settings = SubResource("LabelSettings_q8pd1")
+script = ExtResource("3_ddp4h")
+
+[node name="ScoreTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_mwnc6")
+autoplay = true
+script = ExtResource("5_s48n0")
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_ntjv0")
+volume_db = 24.0
+script = ExtResource("6_ixtwq")
+
+[connection signal="area_entered" from="Player" to="Player" method="_on_area_entered"]
+[connection signal="area_entered" from="Player" to="BackgroundMusic" method="_on_player_area_entered"]
+[connection signal="area_entered" from="Player" to="DeathSound" method="_on_player_area_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="Label" method="_on_score_timer_timeout"]
